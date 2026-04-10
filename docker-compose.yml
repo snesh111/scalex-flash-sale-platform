@@ -1,0 +1,53 @@
+services:
+  api-gateway:
+    build: ./backend/api-gateway
+    restart: always
+    depends_on:
+      - product-service
+      - order-service
+    ports:
+      - "3000:3000"
+
+  queue-service:
+    build: ./backend/queue-service
+    restart: always
+    depends_on:
+      - redis
+    ports:
+      - "3001:3000"
+
+  product-service:
+    build: ./backend/product-service
+    restart: always
+    depends_on:
+      - mysql
+    ports:
+      - "3002:3000"
+
+  order-service:
+    build: ./backend/order-service
+    restart: always
+    depends_on:
+      - mysql
+    ports:
+      - "3003:3000"
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  mysql:
+    image: mysql:8
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: flash
+
+volumes:
+  mysql-data:
