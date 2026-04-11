@@ -19,4 +19,34 @@ pipeline {
                 '''
             }
         }
+
+        stage('Push Images') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh '''
+                    echo $PASS | docker login -u $USER --password-stdin
+
+                    docker push $DOCKER_USER/frontend:$IMAGE_TAG
+                    docker push $DOCKER_USER/api-gateway:$IMAGE_TAG
+                    docker push $DOCKER_USER/product-service:$IMAGE_TAG
+                    docker push $DOCKER_USER/order-service:$IMAGE_TAG
+                    docker push $DOCKER_USER/queue-service:$IMAGE_TAG
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                kubectl apply -f kubernetes/
+                kubectl rollout restart deployment frontend
+                kubectl rollout restart deployment api-gateway
+                kubectl rollout restart deployment product-service
+                kubectl rollout restart deployment order-service
+                kubectl rollout restart deployment queue-service
+                '''
+            }
+        }
     }
+}
