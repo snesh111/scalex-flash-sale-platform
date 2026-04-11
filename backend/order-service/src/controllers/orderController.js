@@ -5,6 +5,7 @@ export const order = async (req, res) => {
     const result = await placeOrder(req.body.productId);
     res.json(result);
   } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
+  console.error("FULL ERROR:", err.response?.data); // 🔥 ADD THIS
+  res.status(500).json({ error: "Gateway error (order)" });
+}
 };

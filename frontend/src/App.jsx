@@ -1,53 +1,133 @@
 import { useState } from "react";
 
+const API = "http://192.168.49.2:30007"; // ✅ Kubernetes API Gateway
+
 function App() {
   const [message, setMessage] = useState("");
   const [products, setProducts] = useState([]);
 
   const loadProducts = async () => {
-    const res = await fetch("http://localhost:3000/products"); // ✅ changed
-    const data = await res.json();
-    setProducts(data);
+    try {
+      const res = await fetch(`${API}/products`);
+      const data = await res.json();
+      setProducts(data);
+    } catch (err) {
+      setMessage("Failed to load products");
+    }
   };
 
   const buyProduct = async (id) => {
-    const res = await fetch("http://localhost:3000/order", { // ✅ changed
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ productId: id }),
-    });
+    try {
+      const res = await fetch(`${API}/order`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId: id }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (data.message) {
-      setMessage("✅ Order successful");
-    } else {
-      setMessage("❌ " + data.error);
+      if (data.message) {
+        setMessage("✅ Order successful");
+      } else {
+        setMessage("❌ " + data.error);
+      }
+
+      loadProducts(); // refresh stock
+    } catch (err) {
+      setMessage("❌ Request failed");
     }
-
-    loadProducts();
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>⚡ ScaleX Store</h1>
+    <div style={styles.container}>
+      <h1 style={styles.title}>⚡ ScaleX Store</h1>
 
-      <button onClick={loadProducts}>Load Products</button>
+      <button style={styles.loadBtn} onClick={loadProducts}>
+        Load Products
+      </button>
 
-      <h3>{message}</h3>
+      {message && <h3 style={styles.message}>{message}</h3>}
 
-      {products.map((p) => (
-        <div key={p.id} style={{ margin: "10px 0" }}>
-          <b>{p.name}</b> | Stock: {p.stock} | ₹{p.price}
-          <button onClick={() => buyProduct(p.id)} style={{ marginLeft: "10px" }}>
-            Buy
-          </button>
-        </div>
-      ))}
+      <div style={styles.grid}>
+        {products.map((p) => (
+          <div key={p.id} style={styles.card}>
+            <h2>{p.name}</h2>
+            <p>₹ {p.price}</p>
+            <p>
+              Stock:{" "}
+              <span style={{ color: p.stock > 0 ? "lime" : "red" }}>
+                {p.stock}
+              </span>
+            </p>
+
+            <button
+              style={{
+                ...styles.buyBtn,
+                backgroundColor: p.stock > 0 ? "#00c853" : "gray",
+                cursor: p.stock > 0 ? "pointer" : "not-allowed",
+              }}
+              disabled={p.stock === 0}
+              onClick={() => buyProduct(p.id)}
+            >
+              {p.stock > 0 ? "Buy Now" : "Out of Stock"}
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    padding: "30px",
+    fontFamily: "Arial",
+    backgroundColor: "#0f172a",
+    minHeight: "100vh",
+    color: "white",
+  },
+  title: {
+    textAlign: "center",
+    marginBottom: "20px",
+  },
+  loadBtn: {
+    display: "block",
+    margin: "0 auto 20px",
+    padding: "10px 20px",
+    fontSize: "16px",
+    backgroundColor: "#7c3aed",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+  },
+  message: {
+    textAlign: "center",
+    marginBottom: "20px",
+  },
+  grid: {
+    display: "flex",
+    gap: "20px",
+    justifyContent: "center",
+    flexWrap: "wrap",
+  },
+  card: {
+    backgroundColor: "#1e293b",
+    padding: "20px",
+    borderRadius: "12px",
+    width: "220px",
+    textAlign: "center",
+    boxShadow: "0 4px 10px rgba(0,0,0,0.5)",
+  },
+  buyBtn: {
+    marginTop: "10px",
+    padding: "10px",
+    border: "none",
+    borderRadius: "8px",
+    color: "white",
+  },
+};
 
 export default App;
