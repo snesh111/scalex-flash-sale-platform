@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_USER = "snesh111"
-        IMAGE_TAG = "v1"
+        IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
     stages {
@@ -39,12 +39,23 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                kubectl apply -f kubernetes/
-                kubectl rollout restart deployment frontend
-                kubectl rollout restart deployment api-gateway
-                kubectl rollout restart deployment product-service
-                kubectl rollout restart deployment order-service
-                kubectl rollout restart deployment queue-service
+                kubectl set image deployment/frontend frontend=$DOCKER_USER/frontend:$IMAGE_TAG
+                kubectl set image deployment/api-gateway api-gateway=$DOCKER_USER/api-gateway:$IMAGE_TAG
+                kubectl set image deployment/product-service product-service=$DOCKER_USER/product-service:$IMAGE_TAG
+                kubectl set image deployment/order-service order-service=$DOCKER_USER/order-service:$IMAGE_TAG
+                kubectl set image deployment/queue-service queue-service=$DOCKER_USER/queue-service:$IMAGE_TAG
+                '''
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                sh '''
+                kubectl rollout status deployment/frontend
+                kubectl rollout status deployment/api-gateway
+                kubectl rollout status deployment/product-service
+                kubectl rollout status deployment/order-service
+                kubectl rollout status deployment/queue-service
                 '''
             }
         }
