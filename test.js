@@ -11,10 +11,9 @@ export const options = {
 };
 
 export default function () {
-  // 👀 browsing
   http.get("http://192.168.49.2:30007/products");
 
-  // 🛒 only some buy
+
   if (Math.random() < 0.3) {
     http.post(
       "http://192.168.49.2:30007/order",
