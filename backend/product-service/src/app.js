@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import productRoutes from "./routes/productRoutes.js";
-import pool from "./config/db.js";   // 🔥 IMPORT DB
+import pool from "./config/db.js";   // 
 
 const app = express();
 
@@ -10,7 +10,6 @@ app.use(express.json());
 
 app.use("/products", productRoutes);
 
-// 🔥 AUTO INIT DATA
 const initData = async () => {
   try {
     const [rows] = await pool.query("SELECT * FROM products");
@@ -19,10 +18,10 @@ const initData = async () => {
       await pool.query(
         "INSERT INTO products (name, stock, price) VALUES ('iPhone', 5, 1000)"
       );
-      console.log("✅ Default product added");
+      console.log("Default product added");
     }
   } catch (err) {
-    console.error("❌ DB Init Error:", err.message);
+    console.error("DB Init Error:", err.message);
   }
 };
 

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: snesh111/frontend:v20   # ✅ CHANGE THIS
-          imagePullPolicy: Always        # ✅ ADD THIS
+          image: snesh111/frontend:v20  
+          imagePullPolicy: Always       
           ports:
             - containerPort: 80

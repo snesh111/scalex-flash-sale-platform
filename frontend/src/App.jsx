@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const API = "http://192.168.49.2:30007"; // ✅ Kubernetes API Gateway
+const API = "/api"; 
 
 function App() {
   const [message, setMessage] = useState("");
@@ -28,15 +28,15 @@ function App() {
 
       const data = await res.json();
 
-      if (data.message) {
-        setMessage("✅ Order successful");
+      if (res.ok && !data.error) {
+        setMessage("Order successful !!");
       } else {
-        setMessage("❌ " + data.error);
+        setMessage("noo" + data.error ||"order failed");
       }
 
-      loadProducts(); // refresh stock
+      loadProducts();
     } catch (err) {
-      setMessage("❌ Request failed");
+      setMessage(" Request failed");
     }
   };
 

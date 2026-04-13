@@ -5,28 +5,27 @@ const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 let pool;
 
 const connectWithRetry = async () => {
-  let retries = 10;   // 🔥 more retries = safer
-
+  let retries = 10;   // 
   while (retries) {
     try {
       pool = mysql.createPool({
-        host: "mysql",      // ✅ correct
+        host: "mysql",      //
         user: "root",
         password: "root",
         database: "flash",
       });
 
       await pool.query("SELECT 1");
-      console.log("✅ MySQL connected");
+      console.log("MySQL connected");
       return;
     } catch (err) {
-      console.log("⏳ Waiting for MySQL...");
+      console.log(" Waiting for MySQL...");
       retries--;
       await sleep(3000);
     }
   }
 
-  throw new Error("❌ Could not connect to MySQL");
+  throw new Error("Could not connect to MySQL");
 };
 
 await connectWithRetry();

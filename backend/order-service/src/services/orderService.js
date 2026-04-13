@@ -3,17 +3,17 @@ import { createOrder } from "../models/orderModel.js";
 
 export const placeOrder = async (productId) => {
   try {
-    // call product-service
+    console.log("Calling product service...");
+
     await axios.post("http://product-service:3000/products/buy", {
       productId,
     });
 
-    // save order
-    await createOrder(productId);
-
+    console.log("Product service success");
     return { message: "Order successful" };
 
   } catch (err) {
-    throw new Error(err.response?.data?.error || "Order failed");
+    console.error("FINAL ERROR:", err.response?.data || err.message);
+    throw err;
   }
 };
