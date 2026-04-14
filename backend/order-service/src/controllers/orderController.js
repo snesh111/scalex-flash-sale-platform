@@ -1,19 +1,17 @@
 import { placeOrder } from "../services/orderService.js";
 
 export const order = async (req, res) => {
-  try {
-    const result = await placeOrder(req.body.productId);
+  const { productId } = req.body;
 
-    res.status(200).json(result || {
-      message: "Order successful",
-      success: true,
-    });
+  const result = await placeOrder(productId);
 
-  } catch (err) {
-    console.error("FULL ERROR:", err.response?.data || err.message);
-
-    res.status(500).json({
-      error: "Gateway error (order)",
+  if (!result.success) {
+    return res.status(400).json({
+      error: result.error,
     });
   }
+
+  return res.status(200).json({
+    message: result.message,
+  });
 };

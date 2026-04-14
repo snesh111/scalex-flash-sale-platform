@@ -27,10 +27,11 @@ app.post("/order", async (req, res) => {
     );
 
     res.json(response.data);
-  } catch (err) {
-    console.error("Order Service Error:", err.message);
-    res.status(500).json({ error: "Gateway error (order)" });
-  }
+  }catch (err) {
+  return res.status(err.response?.status || 500).json({
+    error: err.response?.data?.error || "Order failed",
+  });
+}
 });
 app.get("/", (req, res) => {
   res.send("API Gateway running");
