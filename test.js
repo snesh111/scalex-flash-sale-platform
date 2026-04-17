@@ -13,6 +13,11 @@ export const options = {
 export default function () {
   http.get("http://192.168.49.2:30007/products");
 
+  // 🔥 CPU stress
+  let x = 0;
+  for (let i = 0; i < 10000000; i++) {
+    x += i;
+  }
 
   if (Math.random() < 0.3) {
     http.post(

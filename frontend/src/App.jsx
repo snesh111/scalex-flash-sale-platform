@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const API = "/api"; 
+const API = "http://192.168.58.2:30007";
 
 function App() {
   const [message, setMessage] = useState("");
