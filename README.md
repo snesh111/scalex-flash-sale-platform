@@ -13,11 +13,9 @@ ScaleX is built to simulate real-world e-commerce flash sale systems where thous
 This project demonstrates practical DevOps and backend engineering skills including Docker, Kubernetes, autoscaling, and distributed system design.
 
 ---
-## Architecture
 
-<p align="center">
-  <img src="doc/architecture.jpeg" width="900"/>
-</p>
+## Architecture
+![alt text](doc/architecture.jpeg)
 ---
 
 Frontend (React + Nginx)
