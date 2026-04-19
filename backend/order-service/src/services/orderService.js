@@ -3,18 +3,26 @@ import { createOrder } from "../models/orderModel.js";
 
 export const placeOrder = async (productId) => {
   try {
-    await axios.post(
+    // 🔹 Step 1: Call product-service to reduce stock
+    const response = await axios.post(
       "http://product-service:3000/products/buy",
-      { productId }
+      { productId } // ⚠️ Make sure this matches product-service
     );
 
+    // 🔹 Step 2: Create order in DB
     await createOrder(productId);
 
-    return { success: true, message: "Order successful" };
+    // 🔹 Step 3: Success response
+    return {
+      success: true,
+      message: "Order successful",
+    };
 
   } catch (err) {
+    // 🔥 LOG FULL ERROR (VERY IMPORTANT)
+    console.error("🔥 ORDER ERROR FULL:", err.response?.data || err.message);
 
-    // 🔥 HANDLE BUSINESS ERROR
+    // 🔹 Handle business errors (like out of stock)
     if (err.response && err.response.status === 400) {
       return {
         success: false,
@@ -22,8 +30,7 @@ export const placeOrder = async (productId) => {
       };
     }
 
-    console.error("ORDER ERROR:", err.message);
-
+    // 🔹 Handle unknown errors
     return {
       success: false,
       error: "Internal order error",
