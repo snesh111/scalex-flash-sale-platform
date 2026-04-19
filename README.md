@@ -16,20 +16,6 @@ This project demonstrates practical DevOps and backend engineering skills includ
 
 ## Architecture
 ![alt text](doc/architecture.jpeg)
----
-
-Frontend (React + Nginx)
-        ↓
-    API Gateway
-        ↓
-   Microservices
-     -> Product Service
-     -> Order Service
-     -> Queue Service
-        ↓
-   Database (MySQL)
-        ↓
-Docker + Kubernetes
 
 ---
 
